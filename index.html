@@ -192,7 +192,66 @@
     .error {
       color: #ffd7d7;
     }
+body.reading-mode .reader-header,
+body.reading-mode .controls,
+body.reading-mode .message {
+  display: none;
+}
 
+body.reading-mode .reader-shell {
+  padding: 0;
+  gap: 0;
+}
+
+body.reading-mode .reader-stage {
+  width: 100%;
+  max-width: none;
+  height: 100vh;
+  height: 100svh;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #050404;
+}
+
+body.reading-mode .canvas-holder {
+  padding: 10px;
+}
+
+.floating-reader {
+  display: none;
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  bottom: 12px;
+  z-index: 9999;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
+  padding: 8px;
+  border: 1px solid rgba(202, 176, 120, 0.35);
+  border-radius: 999px;
+  background: rgba(10, 8, 8, 0.88);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.55);
+}
+
+body.reading-mode .floating-reader {
+  display: grid;
+}
+
+.float-btn {
+  min-height: 40px;
+  border: 1px solid rgba(202, 176, 120, 0.35);
+  border-radius: 999px;
+  background: rgba(24, 20, 20, 0.96);
+  color: #f5efe3;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
     @media (max-width: 640px) {
       .reader-shell {
         padding: 10px;
@@ -280,6 +339,13 @@
     <p class="message" id="message">
       Consejo: en celular, usa “Leer más grande” para que el texto no quede pequeño.
     </p>
+    <div class="floating-reader" id="floatingReader">
+  <button class="float-btn" id="floatPrev">←</button>
+  <button class="float-btn" id="floatZoomOut">−</button>
+  <button class="float-btn" id="exitRead">Salir</button>
+  <button class="float-btn" id="floatZoomIn">+</button>
+  <button class="float-btn" id="floatNext">→</button>
+</div>
   </main>
 
   <script type="module">
@@ -303,7 +369,11 @@
     const readingBtn = document.getElementById("readingBtn");
     const fullBtn = document.getElementById("fullBtn");
     const homeBtn = document.getElementById("homeBtn");
-
+const exitRead = document.getElementById("exitRead");
+const floatPrev = document.getElementById("floatPrev");
+const floatNext = document.getElementById("floatNext");
+const floatZoomOut = document.getElementById("floatZoomOut");
+const floatZoomIn = document.getElementById("floatZoomIn");
     let pdfDoc = null;
     let currentPage = 1;
     let totalPages = 0;
@@ -437,26 +507,60 @@
       setMessage("Página ajustada al ancho de la pantalla.");
     });
 
-    readingBtn.addEventListener("click", async () => {
-      zoom = window.innerWidth <= 640 ? 1.45 : 1.25;
-      await renderCurrentPage();
-      setMessage("Modo lectura grande activado. Puedes mover la página hacia los lados si lo necesitas.");
-    });
+   readingBtn.addEventListener("click", async () => {
+  document.body.classList.add("reading-mode");
+  zoom = window.innerWidth <= 640 ? 1.7 : 1.35;
+  await renderCurrentPage();
+});
 
     fullBtn.addEventListener("click", async () => {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-          setMessage("Pantalla completa activada.");
-        } else {
-          await document.exitFullscreen();
-          setMessage("Pantalla completa desactivada.");
-        }
-      } catch (error) {
-        setMessage("El navegador no permitió pantalla completa. En Carrd hay que usar un iframe con allowfullscreen.", true);
-      }
-    });
+  document.body.classList.add("reading-mode");
 
+  try {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    }
+  } catch (error) {
+    // Si el navegador no permite fullscreen, al menos queda el modo lectura limpio.
+  }
+
+  await renderCurrentPage();
+});   
+exitRead.addEventListener("click", async () => {
+  document.body.classList.remove("reading-mode");
+
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    }
+  } catch (error) {}
+
+  await renderCurrentPage();
+});
+
+floatPrev.addEventListener("click", async () => {
+  if (currentPage > 1) {
+    currentPage--;
+    await renderCurrentPage();
+  }
+});
+
+floatNext.addEventListener("click", async () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    await renderCurrentPage();
+  }
+});
+
+floatZoomOut.addEventListener("click", async () => {
+  zoom = Math.max(minZoom, zoom - 0.15);
+  await renderCurrentPage(true);
+});
+
+floatZoomIn.addEventListener("click", async () => {
+  zoom = Math.min(maxZoom, zoom + 0.15);
+  await renderCurrentPage(true);
+});
     homeBtn.addEventListener("click", () => {
       window.open("https://relatosdeterror.carrd.co", "_top");
     });
