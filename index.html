@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Lector de Relatos</title>
 
   <style>
     :root {
       --bg: #0f0d0d;
       --panel: #181414;
-      --paper: #f2eadc;
+      --paper: #f4edde;
       --text: #f5efe3;
       --muted: #c8bba7;
       --line: rgba(202, 176, 120, 0.38);
       --accent: #8b1e24;
+      --accent-dark: #64151a;
     }
 
     * {
@@ -26,16 +28,19 @@
       background: var(--bg);
       color: var(--text);
       font-family: Georgia, "Times New Roman", serif;
-      height: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top, rgba(139,30,36,0.18), transparent 32%),
+        linear-gradient(180deg, #161111 0%, #090808 100%);
     }
 
     .reader-shell {
       width: 100%;
       min-height: 100vh;
       padding: 18px;
-      background:
-        radial-gradient(circle at top, rgba(139,30,36,0.18), transparent 34%),
-        linear-gradient(180deg, #161111 0%, #090808 100%);
     }
 
     .reader-header {
@@ -43,7 +48,7 @@
       margin: 0 auto 14px;
       padding: 18px 18px 16px;
       border: 1px solid var(--line);
-      background: rgba(24, 20, 20, 0.92);
+      background: rgba(24, 20, 20, 0.94);
       border-radius: 16px;
       box-shadow: 0 18px 45px rgba(0,0,0,0.35);
     }
@@ -102,23 +107,59 @@
       border-color: rgba(255,255,255,0.16);
     }
 
-    .pdf-frame {
+    .btn.primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .status {
       max-width: 980px;
-      height: 78vh;
-      min-height: 620px;
+      margin: 0 auto 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(202, 176, 120, 0.22);
+      border-radius: 12px;
+      color: var(--muted);
+      background: rgba(24, 20, 20, 0.76);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .pages {
+      max-width: 980px;
       margin: 0 auto;
+      padding: 14px;
       border: 1px solid var(--line);
       border-radius: 16px;
-      overflow: hidden;
-      background: #111;
+      background: rgba(10, 8, 8, 0.78);
       box-shadow: 0 22px 55px rgba(0,0,0,0.48);
     }
 
-    .pdf-frame iframe {
+    .page-wrap {
+      margin: 0 auto 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .page-number {
       width: 100%;
-      height: 100%;
-      border: 0;
+      max-width: 900px;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    canvas.pdf-page {
+      display: block;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
       background: var(--paper);
+      border-radius: 6px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.45);
     }
 
     .note {
@@ -128,6 +169,11 @@
       font-size: 13px;
       line-height: 1.45;
       text-align: center;
+    }
+
+    .error {
+      color: #ffd7d7;
+      border-color: rgba(139, 30, 36, 0.7);
     }
 
     @media (max-width: 640px) {
@@ -153,10 +199,17 @@
         width: 100%;
       }
 
-      .pdf-frame {
-        height: 72vh;
-        min-height: 560px;
+      .pages {
+        padding: 10px;
         border-radius: 12px;
+      }
+
+      .page-wrap {
+        margin-bottom: 14px;
+      }
+
+      canvas.pdf-page {
+        border-radius: 4px;
       }
     }
   </style>
@@ -168,25 +221,124 @@
       <p class="eyebrow">Lector en línea</p>
       <h1>Relatos de Terror</h1>
       <p class="intro">
-        Puedes leer el PDF completo desde esta página. Si el visor se siente pequeño en tu celular,
-        usa el botón para abrirlo en pantalla completa.
+        Puedes leer el PDF completo desde esta página. En esta versión, el documento se muestra como páginas dentro del lector,
+        sin la barra de descarga del visor PDF del navegador.
       </p>
     </section>
 
     <div class="actions">
-      <a class="btn primary" href="relatos.pdf" target="_blank" rel="noopener">
-        Abrir en pantalla completa
-      </a>
+      <button class="btn primary" id="openFull">
+        Abrir lector en pantalla completa
+      </button>
 
-        </div>
+      <button class="btn" id="topBtn">
+        Volver arriba
+      </button>
+    </div>
 
-    <section class="pdf-frame">
-     <iframe src="relatos.pdf#toolbar=0&navpanes=0&scrollbar=1"></iframe>
-    </section>
+    <div class="status" id="status">
+      Cargando el archivo...
+    </div>
+
+    <section class="pages" id="pages"></section>
 
     <p class="note">
-      Lectura directa desde el navegador.
+      Lectura directa desde el navegador. El archivo se muestra página por página dentro del lector.
     </p>
   </main>
+
+  <script type="module">
+    import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/build/pdf.min.mjs";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/build/pdf.worker.min.mjs";
+
+    const pdfUrl = "relatos.pdf";
+    const pagesContainer = document.getElementById("pages");
+    const statusBox = document.getElementById("status");
+    const openFullBtn = document.getElementById("openFull");
+    const topBtn = document.getElementById("topBtn");
+
+    openFullBtn.addEventListener("click", () => {
+      window.open(window.location.href, "_blank", "noopener");
+    });
+
+    topBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    function getRenderWidth() {
+      const available = pagesContainer.clientWidth - 24;
+      return Math.min(900, Math.max(280, available));
+    }
+
+    async function renderPage(pdf, pageNumber) {
+      const page = await pdf.getPage(pageNumber);
+
+      const baseViewport = page.getViewport({ scale: 1 });
+      const targetWidth = getRenderWidth();
+      const scale = targetWidth / baseViewport.width;
+
+      const viewport = page.getViewport({ scale });
+
+      const outputScale = Math.min(window.devicePixelRatio || 1, 1.7);
+
+      const pageWrap = document.createElement("div");
+      pageWrap.className = "page-wrap";
+
+      const label = document.createElement("div");
+      label.className = "page-number";
+      label.textContent = `Página ${pageNumber}`;
+
+      const canvas = document.createElement("canvas");
+      canvas.className = "pdf-page";
+
+      const context = canvas.getContext("2d", { alpha: false });
+
+      canvas.width = Math.floor(viewport.width * outputScale);
+      canvas.height = Math.floor(viewport.height * outputScale);
+
+      canvas.style.width = `${Math.floor(viewport.width)}px`;
+      canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+      pageWrap.appendChild(label);
+      pageWrap.appendChild(canvas);
+      pagesContainer.appendChild(pageWrap);
+
+      const renderContext = {
+        canvasContext: context,
+        viewport,
+        transform: outputScale !== 1
+          ? [outputScale, 0, 0, outputScale, 0, 0]
+          : null
+      };
+
+      await page.render(renderContext).promise;
+    }
+
+    async function loadPdf() {
+      try {
+        const loadingTask = pdfjsLib.getDocument(pdfUrl);
+        const pdf = await loadingTask.promise;
+
+        statusBox.textContent = `Cargando ${pdf.numPages} páginas...`;
+
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+          statusBox.textContent = `Cargando página ${pageNumber} de ${pdf.numPages}...`;
+          await renderPage(pdf, pageNumber);
+        }
+
+        statusBox.textContent = `PDF cargado completo: ${pdf.numPages} páginas.`;
+
+      } catch (error) {
+        console.error(error);
+        statusBox.classList.add("error");
+        statusBox.textContent =
+          "No se pudo cargar el PDF. Revisa que el archivo se llame exactamente relatos.pdf y que esté en el mismo repositorio que index.html.";
+      }
+    }
+
+    loadPdf();
+  </script>
 </body>
 </html>
