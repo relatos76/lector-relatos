@@ -231,9 +231,9 @@
         Abrir lector en pantalla completa
       </button>
 
-      <button class="btn" id="topBtn">
-        Volver arriba
-      </button>
+     <button class="btn" id="topBtn">
+  Volver a la página principal
+</button>
     </div>
 
     <div class="status" id="status">
@@ -264,8 +264,8 @@
 });
 
     topBtn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+  window.open("https://relatosdeterror.carrd.co", "_top");
+});
 
     function getRenderWidth() {
       const available = pagesContainer.clientWidth - 24;
