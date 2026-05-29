@@ -429,6 +429,27 @@
         font-size: 12px;
       }
     }
+    /* FORZAR BARRA ARRIBA EN MÓVIL Y WEB */
+body.reading-mode .floating-reader {
+  position: fixed !important;
+  top: 14px !important;
+  bottom: auto !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+@media (max-width: 900px) {
+  body.reading-mode .floating-reader {
+    position: fixed !important;
+    top: max(12px, env(safe-area-inset-top)) !important;
+    bottom: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    width: calc(100% - 14px) !important;
+    max-width: none !important;
+  }
+}
   </style>
 </head>
 
