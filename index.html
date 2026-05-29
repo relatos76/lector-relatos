@@ -133,6 +133,7 @@
       text-transform: uppercase;
       cursor: pointer;
       user-select: none;
+      touch-action: manipulation;
     }
 
     .btn.primary {
@@ -142,6 +143,12 @@
 
     .btn.primary:hover {
       background: var(--accent-dark);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      background: rgba(60, 45, 35, 0.98);
+      border-color: rgba(245, 239, 227, 0.72);
     }
 
     .btn:disabled {
@@ -192,73 +199,90 @@
     .error {
       color: #ffd7d7;
     }
-body.reading-mode .reader-header,
-body.reading-mode .controls,
-body.reading-mode .message {
-  display: none;
-}
 
-body.reading-mode .reader-shell {
-  padding: 0;
-  gap: 0;
-}
+    body.reading-mode .reader-header,
+    body.reading-mode .controls,
+    body.reading-mode .message {
+      display: none;
+    }
 
-body.reading-mode .reader-stage {
-  width: 100%;
-  max-width: none;
-  height: 100vh;
-  height: 100svh;
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: #050404;
-}
+    body.reading-mode .reader-shell {
+      padding: 0;
+      gap: 0;
+    }
 
-body.reading-mode .canvas-holder {
-  padding: 10px;
-}
-.floating-reader {
-  display: none;
-  position: fixed;
-  left: 50%;
-  top: 14px;
-  transform: translateX(-50%);
-  z-index: 2147483647;
-  width: calc(100% - 24px);
-  max-width: 720px;
-  gap: 8px;
-  grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr;
-  padding: 8px;
-  border: 1px solid rgba(202, 176, 120, 0.42);
-  border-radius: 999px;
-  background: rgba(10, 8, 8, 0.92);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 12px 34px rgba(0,0,0,0.65);
-}
+    body.reading-mode .reader-stage {
+      width: 100%;
+      max-width: none;
+      height: 100vh;
+      height: 100svh;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      background: #050404;
+    }
 
-body.reading-mode .floating-reader {
-  display: grid !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
+    body.reading-mode .canvas-holder {
+      padding: 10px;
+    }
 
-.float-btn {
-  min-height: 40px;
-  border: 1px solid rgba(202, 176, 120, 0.35);
-  border-radius: 999px;
-  background: rgba(24, 20, 20, 0.96);
-  color: #f5efe3;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-    @media (max-width: 640px) body.reading-mode .floating-reader {
-  top: auto;
-  bottom: 12px;
-}{
+    .floating-reader {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 14px;
+      transform: translateX(-50%);
+      z-index: 2147483647;
+
+      width: calc(100% - 24px);
+      max-width: 880px;
+
+      gap: 12px;
+      grid-template-columns: 1.1fr 1.1fr 1.6fr 1.1fr 1.1fr;
+
+      padding: 10px;
+      border: 1px solid rgba(202, 176, 120, 0.48);
+      border-radius: 999px;
+      background: rgba(10, 8, 8, 0.94);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 34px rgba(0,0,0,0.65);
+    }
+
+    body.reading-mode .floating-reader {
+      display: grid !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .float-btn {
+      min-height: 52px;
+      border: 1px solid rgba(202, 176, 120, 0.46);
+      border-radius: 999px;
+      background: rgba(24, 20, 20, 0.96);
+      color: #f5efe3;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .float-btn:active {
+      transform: scale(0.96);
+      background: rgba(60, 45, 35, 0.98);
+      border-color: rgba(245, 239, 227, 0.72);
+    }
+
+    .float-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 640px) {
       .reader-shell {
         padding: 10px;
         gap: 8px;
@@ -301,74 +325,25 @@ body.reading-mode .floating-reader {
       canvas.pdf-page {
         border-radius: 4px;
       }
+
+      body.reading-mode .floating-reader {
+        top: auto;
+        bottom: 12px;
+
+        width: calc(100% - 14px);
+        max-width: none;
+
+        gap: 6px;
+        padding: 7px;
+        grid-template-columns: 1fr 1fr 1.35fr 1fr 1fr;
+      }
+
+      .float-btn {
+        min-height: 48px;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+      }
     }
-    /* AJUSTE: controles más grandes para el visor de relatos */
-.pdf-controls,
-.viewer-controls,
-.reader-controls,
-.controls,
-.rt-pdf-controls {
-  gap: 10px !important;
-  padding: 10px 14px !important;
-}
-
-.pdf-controls button,
-.viewer-controls button,
-.reader-controls button,
-.controls button,
-.rt-pdf-controls button {
-  min-width: 76px !important;
-  min-height: 44px !important;
-  padding: 0 18px !important;
-  font-size: 16px !important;
-  border-radius: 999px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.pdf-controls .exit-btn,
-.viewer-controls .exit-btn,
-.reader-controls .exit-btn,
-.controls .exit-btn,
-.rt-pdf-controls .exit-btn {
-  min-width: 130px !important;
-  font-size: 14px !important;
-  letter-spacing: 0.08em !important;
-  font-weight: 700 !important;
-}
-
-/* Móvil */
-@media (max-width: 600px) {
-  .pdf-controls,
-  .viewer-controls,
-  .reader-controls,
-  .controls,
-  .rt-pdf-controls {
-    gap: 8px !important;
-    padding: 10px 8px !important;
-  }
-
-  .pdf-controls button,
-  .viewer-controls button,
-  .reader-controls button,
-  .controls button,
-  .rt-pdf-controls button {
-    min-width: 58px !important;
-    min-height: 42px !important;
-    padding: 0 12px !important;
-    font-size: 15px !important;
-  }
-
-  .pdf-controls .exit-btn,
-  .viewer-controls .exit-btn,
-  .reader-controls .exit-btn,
-  .controls .exit-btn,
-  .rt-pdf-controls .exit-btn {
-    min-width: 96px !important;
-    font-size: 13px !important;
-  }
-}
   </style>
 </head>
 
@@ -412,13 +387,14 @@ body.reading-mode .floating-reader {
     <p class="message" id="message">
       Consejo: en celular, usa “Leer más grande” para que el texto no quede pequeño.
     </p>
+
     <div class="floating-reader" id="floatingReader">
-  <button class="float-btn" id="floatPrev">←</button>
-  <button class="float-btn" id="floatZoomOut">−</button>
-  <button class="float-btn" id="exitRead">Salir</button>
-  <button class="float-btn" id="floatZoomIn">+</button>
-  <button class="float-btn" id="floatNext">→</button>
-</div>
+      <button class="float-btn" id="floatPrev">←</button>
+      <button class="float-btn" id="floatZoomOut">−</button>
+      <button class="float-btn" id="exitRead">Salir</button>
+      <button class="float-btn" id="floatZoomIn">+</button>
+      <button class="float-btn" id="floatNext">→</button>
+    </div>
   </main>
 
   <script type="module">
@@ -442,16 +418,17 @@ body.reading-mode .floating-reader {
     const readingBtn = document.getElementById("readingBtn");
     const fullBtn = document.getElementById("fullBtn");
     const homeBtn = document.getElementById("homeBtn");
-const exitRead = document.getElementById("exitRead");
-const floatPrev = document.getElementById("floatPrev");
-const floatNext = document.getElementById("floatNext");
-const floatZoomOut = document.getElementById("floatZoomOut");
-const floatZoomIn = document.getElementById("floatZoomIn");
+
+    const exitRead = document.getElementById("exitRead");
+    const floatPrev = document.getElementById("floatPrev");
+    const floatNext = document.getElementById("floatNext");
+    const floatZoomOut = document.getElementById("floatZoomOut");
+    const floatZoomIn = document.getElementById("floatZoomIn");
+
     let pdfDoc = null;
     let currentPage = 1;
     let totalPages = 0;
 
-    // En móvil empezamos un poco más grande para que el texto no quede tan pequeño.
     let zoom = window.innerWidth <= 640 ? 1.28 : 1;
     const minZoom = 0.85;
     const maxZoom = 2.3;
@@ -466,6 +443,9 @@ const floatZoomIn = document.getElementById("floatZoomIn");
     function updateButtons() {
       prevBtn.disabled = currentPage <= 1;
       nextBtn.disabled = currentPage >= totalPages;
+      floatPrev.disabled = currentPage <= 1;
+      floatNext.disabled = currentPage >= totalPages;
+
       pageStatus.textContent = totalPages
         ? `Página ${currentPage} de ${totalPages} · Zoom ${Math.round(zoom * 100)}%`
         : "Cargando archivo...";
@@ -521,7 +501,6 @@ const floatZoomIn = document.getElementById("floatZoomIn");
 
         updateButtons();
 
-        // Centra la página cuando el zoom la hace más ancha que la pantalla.
         requestAnimationFrame(() => {
           if (!keepScroll) {
             stage.scrollTop = 0;
@@ -580,60 +559,63 @@ const floatZoomIn = document.getElementById("floatZoomIn");
       setMessage("Página ajustada al ancho de la pantalla.");
     });
 
-   readingBtn.addEventListener("click", async () => {
-  document.body.classList.add("reading-mode");
-  zoom = window.innerWidth <= 640 ? 1.7 : 1.35;
-  await renderCurrentPage();
-});
+    readingBtn.addEventListener("click", async () => {
+      document.body.classList.add("reading-mode");
+      zoom = window.innerWidth <= 640 ? 1.7 : 1.35;
+      await renderCurrentPage();
+    });
 
     fullBtn.addEventListener("click", async () => {
-  document.body.classList.add("reading-mode");
+      document.body.classList.add("reading-mode");
 
-  try {
-    if (!document.fullscreenElement) {
-      await document.documentElement.requestFullscreen();
-    }
-  } catch (error) {
-    // Si el navegador no permite fullscreen, al menos queda el modo lectura limpio.
-  }
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (error) {
+        // Si el navegador no permite pantalla completa, queda activo el modo lectura.
+      }
 
-  await renderCurrentPage();
-});   
-exitRead.addEventListener("click", async () => {
-  document.body.classList.remove("reading-mode");
+      await renderCurrentPage();
+    });
 
-  try {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    }
-  } catch (error) {}
+    exitRead.addEventListener("click", async () => {
+      document.body.classList.remove("reading-mode");
 
-  await renderCurrentPage();
-});
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        }
+      } catch (error) {}
 
-floatPrev.addEventListener("click", async () => {
-  if (currentPage > 1) {
-    currentPage--;
-    await renderCurrentPage();
-  }
-});
+      zoom = window.innerWidth <= 640 ? 1.28 : 1;
+      await renderCurrentPage();
+    });
 
-floatNext.addEventListener("click", async () => {
-  if (currentPage < totalPages) {
-    currentPage++;
-    await renderCurrentPage();
-  }
-});
+    floatPrev.addEventListener("click", async () => {
+      if (currentPage > 1) {
+        currentPage--;
+        await renderCurrentPage();
+      }
+    });
 
-floatZoomOut.addEventListener("click", async () => {
-  zoom = Math.max(minZoom, zoom - 0.15);
-  await renderCurrentPage(true);
-});
+    floatNext.addEventListener("click", async () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        await renderCurrentPage();
+      }
+    });
 
-floatZoomIn.addEventListener("click", async () => {
-  zoom = Math.min(maxZoom, zoom + 0.15);
-  await renderCurrentPage(true);
-});
+    floatZoomOut.addEventListener("click", async () => {
+      zoom = Math.max(minZoom, zoom - 0.15);
+      await renderCurrentPage(true);
+    });
+
+    floatZoomIn.addEventListener("click", async () => {
+      zoom = Math.min(maxZoom, zoom + 0.15);
+      await renderCurrentPage(true);
+    });
+
     homeBtn.addEventListener("click", () => {
       window.open("https://relatosdeterror.carrd.co", "_top");
     });
@@ -646,6 +628,11 @@ floatZoomIn.addEventListener("click", async () => {
 
       if (event.key === "ArrowRight" && currentPage < totalPages) {
         currentPage++;
+        await renderCurrentPage();
+      }
+
+      if (event.key === "Escape" && document.body.classList.contains("reading-mode")) {
+        document.body.classList.remove("reading-mode");
         await renderCurrentPage();
       }
     });
